@@ -7,6 +7,10 @@ let logger = Logger(subsystem: "com.dexterleng.FixAnimationsTweak", category: "d
 let initialize: @convention(c) () -> Void = {
     logger.info("Injected!")
     
+    NSObject.exchange(instanceMethod: Selector(("setDuration:")),
+                      in: "CAAnimation",
+                      for: #selector(NSObject.swizzled_CAAnimation_setDuration))
+    
     NSObject.exchange(instanceMethod: Selector(("animates")),
                       in: "NSPopover",
                       for: #selector(NSObject.swizzled_NSPopover_animates))
@@ -16,6 +20,15 @@ let initialize: @convention(c) () -> Void = {
                       for: #selector(NSObject.swizzled_NSPopover_behavior))
 }
 
+// CAAnimation swizzles
+extension NSObject {
+    @objc func swizzled_CAAnimation_setDuration(_ duration: Double) {
+        // 0.0 causes infinite recursion between AppKit and QuartzCore
+        swizzled_CAAnimation_setDuration(0.01)
+    }
+}
+    
+// NSPopover swizzles
 extension NSObject {
     @objc func swizzled_NSPopover_animates() -> Bool {
         let originalAnimates = self.swizzled_NSPopover_animates()
