@@ -1,6 +1,6 @@
 # FixAnimationsTweak
 
-Disabling animations in Mac apps using code injection.
+Disable animations in Mac apps using code injection.
 
 Read the blog post [here](https://dexterleng.com/posts/code-injection/).
 
